@@ -40,6 +40,11 @@ namespace JustEat.HttpClientInterception.Matching
             _comparer = comparer;
             _registration = registration;
             _expected = GetUriStringForMatch(registration);
+
+            if (_registration.HostMatcher == null)
+            {
+                _registration.HostMatcher = s => comparer.Equals(_expected, s);
+            }
         }
 
         /// <inheritdoc />
@@ -52,7 +57,8 @@ namespace JustEat.HttpClientInterception.Matching
 
             string actual = GetUriStringForMatch(_registration, request.RequestUri);
 
-            if (!_comparer.Equals(_expected, actual))
+            var res2 = _registration.HostMatcher(actual);
+            if (!res2)
             {
                 return false;
             }

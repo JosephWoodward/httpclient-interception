@@ -557,6 +557,39 @@ namespace JustEat.HttpClientInterception
         }
 
         [Fact]
+        public static async Task Match_Delegated_Host_Name()
+        {
+            // Arrange
+            string expected = @"{""id"":12}";
+            string actual;
+
+            var builder = new HttpRequestInterceptionBuilder()
+                .ForHttp()
+/*                .ForAnyHost()*/
+                .ForHost(x =>
+                {
+                    var result = x.Contains("boo", StringComparison.OrdinalIgnoreCase);
+
+                    return result;
+                })
+                .ForPath("orders")
+                .ForQuery("id=12")
+                .WithStatus(HttpStatusCode.OK)
+                .WithContent(expected);
+
+            var options = new HttpClientInterceptorOptions().Register(builder);
+
+            using (var client = options.CreateHttpClient())
+            {
+                // Act
+                actual = await client.GetStringAsync("http://boo.net/orders?id=12");
+            }
+
+            // Assert
+            actual.ShouldBe(expected);
+        }
+
+        [Fact]
         public static async Task Use_Default_Response_For_Unmatched_Requests()
         {
             // Arrange

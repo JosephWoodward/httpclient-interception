@@ -16,6 +16,8 @@ namespace JustEat.HttpClientInterception
 
         internal Predicate<HttpRequestMessage> UserMatcher { get; set; }
 
+        internal Func<string, bool> HostMatcher { get; set; }
+
         internal Matching.RequestMatcher InternalMatcher { get; set; }
 
         internal HttpMethod Method { get; set; }

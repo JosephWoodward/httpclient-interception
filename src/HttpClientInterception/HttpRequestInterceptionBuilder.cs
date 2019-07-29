@@ -45,6 +45,8 @@ namespace JustEat.HttpClientInterception
 
         private UriBuilder _uriBuilder = new UriBuilder();
 
+        private Func<string, bool> _hostMatcher;
+
         private Version _version;
 
         private bool _hasCustomPort;
@@ -126,7 +128,24 @@ namespace JustEat.HttpClientInterception
         /// </returns>
         public HttpRequestInterceptionBuilder ForHost(string host)
         {
+/*
+            _hostMatcher = HttpClientInterceptorOptions.;
+*/
             _uriBuilder.Host = host;
+            _ignoreHost = false;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the host name of the request URI to intercept a request for.
+        /// </summary>
+        /// <param name="host">The request URI host name to intercept.</param>
+        /// <returns>
+        /// The current <see cref="HttpRequestInterceptionBuilder"/>.
+        /// </returns>
+        public HttpRequestInterceptionBuilder ForHost(Func<string, bool> host)
+        {
+            _hostMatcher = host;
             _ignoreHost = false;
             return this;
         }
@@ -847,6 +866,7 @@ namespace JustEat.HttpClientInterception
                 ContentMediaType = _mediaType,
                 HasCustomPort = _hasCustomPort,
                 IgnoreHost = _ignoreHost,
+                HostMatcher = _hostMatcher,
                 IgnorePath = _ignorePath,
                 IgnoreQuery = _ignoreQuery,
                 Method = _method,
